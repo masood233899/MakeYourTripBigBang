@@ -9,16 +9,18 @@ using MakeYourTrip.Models;
 using MakeYourTrip.Exceptions;
 using MakeYourTrip.Models.DTO;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using MakeYourTrip.Interfaces;
+using Error = MakeYourTrip.Models.Error;
 
 namespace MakeYourTrip.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IUsersService _userService;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUsersService userService)
         {
             _userService = userService;
         }
@@ -52,7 +54,7 @@ namespace MakeYourTrip.Controllers
         {
             try
             {
-                UserDTO user = await _userService.LogIN(userDTO);
+                UserDTO user = await _userService.Login(userDTO);
                 if (user == null)
                     return BadRequest(new Error(1, "Invalid Username or Password"));
                 return Ok(user);
@@ -96,7 +98,7 @@ namespace MakeYourTrip.Controllers
         {
             try
             {
-                bool myUser = await _userService.Update_Password(user);
+                bool myUser = await _userService.UpdatePassword(user);
                 if (myUser)
                     return NotFound(new Error(3, "Unable to Update Password"));
                 return Ok("Password Updated Successfully");

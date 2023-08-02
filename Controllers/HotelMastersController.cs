@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MakeYourTrip.Models;
+using MakeYourTrip.Exceptions;
+using MakeYourTrip.Interfaces;
 
 namespace MakeYourTrip.Controllers
 {
@@ -13,111 +15,50 @@ namespace MakeYourTrip.Controllers
     [ApiController]
     public class HotelMastersController : ControllerBase
     {
-        private readonly TourPackagesContext _context;
+        private readonly IHotelMastersService _hotelMasterService;
 
-        public HotelMastersController(TourPackagesContext context)
+        public HotelMastersController(IHotelMastersService hotelMasterService)
         {
-            _context = context;
+            _hotelMasterService = hotelMasterService;
         }
 
         // GET: api/HotelMasters
         [HttpGet]
         public async Task<ActionResult<IEnumerable<HotelMaster>>> GetHotelMasters()
         {
-          if (_context.HotelMasters == null)
-          {
-              return NotFound();
-          }
-            return await _context.HotelMasters.ToListAsync();
-        }
-
-        // GET: api/HotelMasters/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<HotelMaster>> GetHotelMaster(int id)
-        {
-          if (_context.HotelMasters == null)
-          {
-              return NotFound();
-          }
-            var hotelMaster = await _context.HotelMasters.FindAsync(id);
-
-            if (hotelMaster == null)
-            {
-                return NotFound();
-            }
-
-            return hotelMaster;
-        }
-
-        // PUT: api/HotelMasters/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutHotelMaster(int id, HotelMaster hotelMaster)
-        {
-            if (id != hotelMaster.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(hotelMaster).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var myhotel = await _hotelMasterService.View_All_HotelMaster();
+                if (myhotel.Count > 0)
+                    return Ok(myhotel);
+                return BadRequest(new Error(10, "No hotels are Existing"));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (InvalidSqlException ise)
             {
-                if (!HotelMasterExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(new Error(25, ise.Message));
             }
-
-            return NoContent();
         }
 
-        // POST: api/HotelMasters
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        
         [HttpPost]
         public async Task<ActionResult<HotelMaster>> PostHotelMaster(HotelMaster hotelMaster)
         {
-          if (_context.HotelMasters == null)
-          {
-              return Problem("Entity set 'TourPackagesContext.HotelMasters'  is null.");
-          }
-            _context.HotelMasters.Add(hotelMaster);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetHotelMaster", new { id = hotelMaster.Id }, hotelMaster);
-        }
-
-        // DELETE: api/HotelMasters/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteHotelMaster(int id)
-        {
-            if (_context.HotelMasters == null)
+            try
             {
-                return NotFound();
+                var myhotel = await _hotelMasterService.Add_HotelMaster(hotelMaster);
+                if (myhotel.Id != null)
+                    return Created("Hotel Added Successfully", myhotel);
+                return BadRequest(new Error(1, $"hotel {myhotel.Id} is Present already"));
             }
-            var hotelMaster = await _context.HotelMasters.FindAsync(id);
-            if (hotelMaster == null)
+            catch (InvalidPrimaryKeyId ip)
             {
-                return NotFound();
+                return BadRequest(new Error(2, ip.Message));
             }
-
-            _context.HotelMasters.Remove(hotelMaster);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (InvalidSqlException ise)
+            {
+                return BadRequest(new Error(25, ise.Message));
+            }
         }
 
-        private bool HotelMasterExists(int id)
-        {
-            return (_context.HotelMasters?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
     }
 }

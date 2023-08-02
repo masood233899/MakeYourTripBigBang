@@ -6,118 +6,65 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MakeYourTrip.Models;
+using MakeYourTrip.Interfaces;
+using MakeYourTrip.Exceptions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Error = MakeYourTrip.Models.Error;
 
 namespace MakeYourTrip.Controllers
 {
-    [Route("api/[controller]")]
+
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class PlaceMastersController : ControllerBase
     {
-        private readonly TourPackagesContext _context;
+        private readonly IPlaceMastersService _placeMastersService;
 
-        public PlaceMastersController(TourPackagesContext context)
+        public PlaceMastersController(IPlaceMastersService placeMastersService)
         {
-            _context = context;
+            _placeMastersService = placeMastersService;
         }
 
-        // GET: api/PlaceMasters
+        [ProducesResponseType(typeof(PlaceMaster), StatusCodes.Status200OK)]//Success Response
+        [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PlaceMaster>>> GetPlaceMasters()
+        public async Task<ActionResult<List<PlaceMaster>>> View_All_PlaceMaster()
         {
-          if (_context.PlaceMasters == null)
-          {
-              return NotFound();
-          }
-            return await _context.PlaceMasters.ToListAsync();
-        }
-
-        // GET: api/PlaceMasters/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PlaceMaster>> GetPlaceMaster(int id)
-        {
-          if (_context.PlaceMasters == null)
-          {
-              return NotFound();
-          }
-            var placeMaster = await _context.PlaceMasters.FindAsync(id);
-
-            if (placeMaster == null)
-            {
-                return NotFound();
-            }
-
-            return placeMaster;
-        }
-
-        // PUT: api/PlaceMasters/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPlaceMaster(int id, PlaceMaster placeMaster)
-        {
-            if (id != placeMaster.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(placeMaster).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var myPlaceMasters = await _placeMastersService.View_All_PlaceMasters();
+                if (myPlaceMasters.Count > 0)
+                    return Ok(myPlaceMasters);
+                return BadRequest(new Error(10, "No PlateSizes are Existing"));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (InvalidSqlException ise)
             {
-                if (!PlaceMasterExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(new Error(25, ise.Message));
             }
-
-            return NoContent();
         }
 
-        // POST: api/PlaceMasters
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [ProducesResponseType(typeof(PlaceMaster), StatusCodes.Status200OK)]//Success Response
+        [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost]
-        public async Task<ActionResult<PlaceMaster>> PostPlaceMaster(PlaceMaster placeMaster)
+        public async Task<ActionResult<PlaceMaster>> Add_PlaceMaster(PlaceMaster PlaceMaster)
         {
-          if (_context.PlaceMasters == null)
-          {
-              return Problem("Entity set 'TourPackagesContext.PlaceMasters'  is null.");
-          }
-            _context.PlaceMasters.Add(placeMaster);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPlaceMaster", new { id = placeMaster.Id }, placeMaster);
-        }
-
-        // DELETE: api/PlaceMasters/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePlaceMaster(int id)
-        {
-            if (_context.PlaceMasters == null)
+            try
             {
-                return NotFound();
+                /* if (PlaceMaster.Id <= 0)
+                     throw new InvalidPrimaryID();*/
+                var myPlaceMaster = await _placeMastersService.Add_PlaceMaster(PlaceMaster);
+                if (myPlaceMaster.Id != null)
+                    return Created("PlaceMaster created Successfully", myPlaceMaster);
+                return BadRequest(new Error(1, $"PlaceMaster {PlaceMaster.Id} is Present already"));
             }
-            var placeMaster = await _context.PlaceMasters.FindAsync(id);
-            if (placeMaster == null)
+            catch (InvalidPrimaryKeyId ip)
             {
-                return NotFound();
+                return BadRequest(new Error(2, ip.Message));
             }
-
-            _context.PlaceMasters.Remove(placeMaster);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool PlaceMasterExists(int id)
-        {
-            return (_context.PlaceMasters?.Any(e => e.Id == id)).GetValueOrDefault();
+            catch (InvalidSqlException ise)
+            {
+                return BadRequest(new Error(25, ise.Message));
+            }
         }
     }
 }

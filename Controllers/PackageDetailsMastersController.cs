@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MakeYourTrip.Models;
+using MakeYourTrip.Exceptions;
+using MakeYourTrip.Interfaces;
 
 namespace MakeYourTrip.Controllers
 {
@@ -13,111 +15,49 @@ namespace MakeYourTrip.Controllers
     [ApiController]
     public class PackageDetailsMastersController : ControllerBase
     {
-        private readonly TourPackagesContext _context;
+        private readonly IPackageDetailsMastersService _packageDetailsMastersService;
 
-        public PackageDetailsMastersController(TourPackagesContext context)
+        public PackageDetailsMastersController(IPackageDetailsMastersService packageDetailsMastersService)
         {
-            _context = context;
+            _packageDetailsMastersService = packageDetailsMastersService;
         }
 
         // GET: api/PackageDetailsMasters
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PackageDetailsMaster>>> GetPackageDetailsMasters()
         {
-          if (_context.PackageDetailsMasters == null)
-          {
-              return NotFound();
-          }
-            return await _context.PackageDetailsMasters.ToListAsync();
-        }
-
-        // GET: api/PackageDetailsMasters/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PackageDetailsMaster>> GetPackageDetailsMaster(int id)
-        {
-          if (_context.PackageDetailsMasters == null)
-          {
-              return NotFound();
-          }
-            var packageDetailsMaster = await _context.PackageDetailsMasters.FindAsync(id);
-
-            if (packageDetailsMaster == null)
-            {
-                return NotFound();
-            }
-
-            return packageDetailsMaster;
-        }
-
-        // PUT: api/PackageDetailsMasters/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPackageDetailsMaster(int id, PackageDetailsMaster packageDetailsMaster)
-        {
-            if (id != packageDetailsMaster.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(packageDetailsMaster).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var mypackages = await _packageDetailsMastersService.View_All_PackageDetailsMaster();
+                if (mypackages.Count > 0)
+                    return Ok(mypackages);
+                return BadRequest(new Error(10, "No packages are Existing"));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (InvalidSqlException ise)
             {
-                if (!PackageDetailsMasterExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(new Error(25, ise.Message));
             }
-
-            return NoContent();
         }
 
-        // POST: api/PackageDetailsMasters
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<PackageDetailsMaster>> PostPackageDetailsMaster(PackageDetailsMaster packageDetailsMaster)
         {
-          if (_context.PackageDetailsMasters == null)
-          {
-              return Problem("Entity set 'TourPackagesContext.PackageDetailsMasters'  is null.");
-          }
-            _context.PackageDetailsMasters.Add(packageDetailsMaster);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPackageDetailsMaster", new { id = packageDetailsMaster.Id }, packageDetailsMaster);
-        }
-
-        // DELETE: api/PackageDetailsMasters/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePackageDetailsMaster(int id)
-        {
-            if (_context.PackageDetailsMasters == null)
+            try
             {
-                return NotFound();
+                var mypackage = await _packageDetailsMastersService.Add_PackageDetailsMaster(packageDetailsMaster);
+                if (mypackage.Id != null)
+                    return Created("Added created Successfully", mypackage);
+                return BadRequest(new Error(1, $"Package Details {packageDetailsMaster.Id} is Present already"));
             }
-            var packageDetailsMaster = await _context.PackageDetailsMasters.FindAsync(id);
-            if (packageDetailsMaster == null)
+            catch (InvalidPrimaryKeyId ip)
             {
-                return NotFound();
+                return BadRequest(new Error(2, ip.Message));
             }
-
-            _context.PackageDetailsMasters.Remove(packageDetailsMaster);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (InvalidSqlException ise)
+            {
+                return BadRequest(new Error(25, ise.Message));
+            }
         }
 
-        private bool PackageDetailsMasterExists(int id)
-        {
-            return (_context.PackageDetailsMasters?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
     }
 }

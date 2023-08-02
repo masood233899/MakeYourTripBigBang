@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MakeYourTrip.Models;
+using MakeYourTrip.Interfaces;
+using MakeYourTrip.Exceptions;
+using MakeYourTrip.Models.DTO;
 
 namespace MakeYourTrip.Controllers
 {
@@ -13,111 +16,55 @@ namespace MakeYourTrip.Controllers
     [ApiController]
     public class RoomTypeMastersController : ControllerBase
     {
-        private readonly TourPackagesContext _context;
+        private readonly IRoomTypeMastersService _roomTypeMastersService;
 
-        public RoomTypeMastersController(TourPackagesContext context)
+        public RoomTypeMastersController(IRoomTypeMastersService roomTypeMastersService)
         {
-            _context = context;
+            _roomTypeMastersService = roomTypeMastersService;
         }
 
-        // GET: api/RoomTypeMasters
+        [ProducesResponseType(typeof(RoomTypeMaster), StatusCodes.Status200OK)]//Success Response
+        [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RoomTypeMaster>>> GetRoomTypeMasters()
         {
-          if (_context.RoomTypeMasters == null)
-          {
-              return NotFound();
-          }
-            return await _context.RoomTypeMasters.ToListAsync();
-        }
-
-        // GET: api/RoomTypeMasters/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<RoomTypeMaster>> GetRoomTypeMaster(int id)
-        {
-          if (_context.RoomTypeMasters == null)
-          {
-              return NotFound();
-          }
-            var roomTypeMaster = await _context.RoomTypeMasters.FindAsync(id);
-
-            if (roomTypeMaster == null)
-            {
-                return NotFound();
-            }
-
-            return roomTypeMaster;
-        }
-
-        // PUT: api/RoomTypeMasters/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutRoomTypeMaster(int id, RoomTypeMaster roomTypeMaster)
-        {
-            if (id != roomTypeMaster.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(roomTypeMaster).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var myRoomType = await _roomTypeMastersService.View_All_RoomType();
+                if (myRoomType.Count > 0)
+                    return Ok(myRoomType);
+                return BadRequest(new Error(10, "No room types are Existing"));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (InvalidSqlException ise)
             {
-                if (!RoomTypeMasterExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(new Error(25, ise.Message));
             }
-
-            return NoContent();
         }
 
-        // POST: api/RoomTypeMasters
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+
+        [ProducesResponseType(typeof(RoomTypeMaster), StatusCodes.Status200OK)]//Success Response
+        [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost]
         public async Task<ActionResult<RoomTypeMaster>> PostRoomTypeMaster(RoomTypeMaster roomTypeMaster)
         {
-          if (_context.RoomTypeMasters == null)
-          {
-              return Problem("Entity set 'TourPackagesContext.RoomTypeMasters'  is null.");
-          }
-            _context.RoomTypeMasters.Add(roomTypeMaster);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetRoomTypeMaster", new { id = roomTypeMaster.Id }, roomTypeMaster);
-        }
-
-        // DELETE: api/RoomTypeMasters/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRoomTypeMaster(int id)
-        {
-            if (_context.RoomTypeMasters == null)
+            try
             {
-                return NotFound();
+                var myRoomType = await _roomTypeMastersService.Add_RoomType(roomTypeMaster);
+                if (myRoomType.Id != null)
+                    return Created("Added created Successfully", myRoomType);
+                return BadRequest(new Error(1, $"Room type {roomTypeMaster.Id} is Present already"));
             }
-            var roomTypeMaster = await _context.RoomTypeMasters.FindAsync(id);
-            if (roomTypeMaster == null)
+            catch (InvalidPrimaryKeyId ip)
             {
-                return NotFound();
+                return BadRequest(new Error(2, ip.Message));
             }
-
-            _context.RoomTypeMasters.Remove(roomTypeMaster);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool RoomTypeMasterExists(int id)
-        {
-            return (_context.RoomTypeMasters?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+            catch (InvalidSqlException ise)
+            {
+                return BadRequest(new Error(25, ise.Message));
+            }
+        }   
+        
     }
 }

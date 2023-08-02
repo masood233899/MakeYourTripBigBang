@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MakeYourTrip.Models;
+using MakeYourTrip.Exceptions;
+using MakeYourTrip.Interfaces;
 
 namespace MakeYourTrip.Controllers
 {
@@ -13,111 +15,48 @@ namespace MakeYourTrip.Controllers
     [ApiController]
     public class VehicleDetailsMastersController : ControllerBase
     {
-        private readonly TourPackagesContext _context;
+        private readonly IVehicleDetailsMasterService _vehicleDetailsMasterService;
 
-        public VehicleDetailsMastersController(TourPackagesContext context)
+        public VehicleDetailsMastersController(IVehicleDetailsMasterService vehicleDetailsMasterService)
         {
-            _context = context;
+            _vehicleDetailsMasterService = vehicleDetailsMasterService;
         }
 
         // GET: api/VehicleDetailsMasters
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VehicleDetailsMaster>>> GetVehicleDetailsMasters()
         {
-          if (_context.VehicleDetailsMasters == null)
-          {
-              return NotFound();
-          }
-            return await _context.VehicleDetailsMasters.ToListAsync();
-        }
-
-        // GET: api/VehicleDetailsMasters/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<VehicleDetailsMaster>> GetVehicleDetailsMaster(int id)
-        {
-          if (_context.VehicleDetailsMasters == null)
-          {
-              return NotFound();
-          }
-            var vehicleDetailsMaster = await _context.VehicleDetailsMasters.FindAsync(id);
-
-            if (vehicleDetailsMaster == null)
-            {
-                return NotFound();
-            }
-
-            return vehicleDetailsMaster;
-        }
-
-        // PUT: api/VehicleDetailsMasters/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutVehicleDetailsMaster(int id, VehicleDetailsMaster vehicleDetailsMaster)
-        {
-            if (id != vehicleDetailsMaster.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(vehicleDetailsMaster).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var myVehicleDetailsMasters = await _vehicleDetailsMasterService.View_All_VehicleDetailsMaster();
+                if (myVehicleDetailsMasters.Count > 0)
+                    return Ok(myVehicleDetailsMasters);
+                return BadRequest(new Error(10, "No Vehicle details Exists"));
             }
-            catch (DbUpdateConcurrencyException)
+            catch (InvalidSqlException ise)
             {
-                if (!VehicleDetailsMasterExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(new Error(25, ise.Message));
             }
-
-            return NoContent();
         }
 
-        // POST: api/VehicleDetailsMasters
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<VehicleDetailsMaster>> PostVehicleDetailsMaster(VehicleDetailsMaster vehicleDetailsMaster)
         {
-          if (_context.VehicleDetailsMasters == null)
-          {
-              return Problem("Entity set 'TourPackagesContext.VehicleDetailsMasters'  is null.");
-          }
-            _context.VehicleDetailsMasters.Add(vehicleDetailsMaster);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetVehicleDetailsMaster", new { id = vehicleDetailsMaster.Id }, vehicleDetailsMaster);
-        }
-
-        // DELETE: api/VehicleDetailsMasters/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteVehicleDetailsMaster(int id)
-        {
-            if (_context.VehicleDetailsMasters == null)
+            try
             {
-                return NotFound();
+                var myVehicleDetailsMasters = await _vehicleDetailsMasterService.Add_VehicleDetailsMaster(vehicleDetailsMaster);
+                if (myVehicleDetailsMasters.Id != null)
+                    return Created("Added created Successfully", myVehicleDetailsMasters);
+                return BadRequest(new Error(1, $"Vehicle Details {vehicleDetailsMaster.Id} is Present already"));
             }
-            var vehicleDetailsMaster = await _context.VehicleDetailsMasters.FindAsync(id);
-            if (vehicleDetailsMaster == null)
+            catch (InvalidPrimaryKeyId ip)
             {
-                return NotFound();
+                return BadRequest(new Error(2, ip.Message));
             }
-
-            _context.VehicleDetailsMasters.Remove(vehicleDetailsMaster);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool VehicleDetailsMasterExists(int id)
-        {
-            return (_context.VehicleDetailsMasters?.Any(e => e.Id == id)).GetValueOrDefault();
+            catch (InvalidSqlException ise)
+            {
+                return BadRequest(new Error(25, ise.Message));
+            }
         }
     }
 }

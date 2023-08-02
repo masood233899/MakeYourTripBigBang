@@ -33,6 +33,13 @@ builder.Services.AddScoped<ICrud<PackageMaster, IdDTO>, PackageMastersRepo>();
 builder.Services.AddScoped<IPackageMastersService, PackageMastersService>();
 builder.Services.AddScoped<ICrud<PackageDetailsMaster, IdDTO>, PackageDetailsMastersRepo>();
 builder.Services.AddScoped<IPackageDetailsMastersService, PackageDetailsMastersService>();
+builder.Services.AddScoped<ICrud<VehicleDetailsMaster, IdDTO>, VehicleDetailsMasterRepo>();
+builder.Services.AddScoped<IVehicleDetailsMasterService, VehicleDetailsMasterService>();
+builder.Services.AddScoped<ICrud<Booking, IdDTO>, BookingsRepo>();
+builder.Services.AddScoped<IBookingsService, BookingsService>();
+builder.Services.AddScoped<ICrud<VehicleBooking, IdDTO>, VehicleBookingsRepo>();
+builder.Services.AddScoped<IVehicleBookingsService, VehicleBookingsService>();
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                .AddJwtBearer(options =>

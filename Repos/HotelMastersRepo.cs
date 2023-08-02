@@ -75,7 +75,7 @@ namespace MakeYourTrip.Repos
         {
             try
             {
-                var HotelMasters = await _context.VehicleMasters.ToListAsync();
+                var HotelMasters = await _context.HotelMasters.ToListAsync();
                 var HotelMaster = HotelMasters.SingleOrDefault(h => h.Id == item.Idint);
                 if (HotelMaster != null)
                     return HotelMaster;

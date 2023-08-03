@@ -39,6 +39,9 @@ builder.Services.AddScoped<ICrud<Booking, IdDTO>, BookingsRepo>();
 builder.Services.AddScoped<IBookingsService, BookingsService>();
 builder.Services.AddScoped<ICrud<VehicleBooking, IdDTO>, VehicleBookingsRepo>();
 builder.Services.AddScoped<IVehicleBookingsService, VehicleBookingsService>();
+builder.Services.AddScoped<IRoomDetailsMastersService, RoomDetailsMastersService>();
+builder.Services.AddScoped<ICrud<RoomDetailsMaster, IdDTO>, RoomDetailsMastersRepo>();
+
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

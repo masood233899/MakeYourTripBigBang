@@ -20,9 +20,9 @@ namespace MakeYourTrip.Services
             var newroomdetails = roomdetails.SingleOrDefault(h => h.Id == roomDetailsMaster.Id);
             if (newroomdetails == null)
             {
-                var mypackage = await _roomDetailsMasterrepo.Add(roomDetailsMaster);
-                if (mypackage != null)
-                    return mypackage;
+                var myroom = await _roomDetailsMasterrepo.Add(roomDetailsMaster);
+                if (myroom != null)
+                    return myroom;
             }
             return null;
         }

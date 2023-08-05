@@ -25,7 +25,7 @@ public partial class TourPackagesContext : DbContext
 
     public virtual DbSet<PlaceMaster> PlaceMasters { get; set; }
 
-    public virtual DbSet<Request> Requests { get; set; }
+    public virtual DbSet<PostGallery> PostGalleries { get; set; }
 
     public virtual DbSet<RoomBooking> RoomBookings { get; set; }
 
@@ -41,15 +41,14 @@ public partial class TourPackagesContext : DbContext
 
     public virtual DbSet<VehicleMaster> VehicleMasters { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("data source = .\\SQLEXPRESS; initial catalog = TourPackages;integrated security=SSPI;TrustServerCertificate=True;");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Booking>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Bookings__3213E83F72BACD97");
+            entity.HasKey(e => e.Id).HasName("PK__Bookings__3213E83F81DE45CC");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Feedback)
@@ -63,20 +62,23 @@ public partial class TourPackagesContext : DbContext
 
             entity.HasOne(d => d.PackageMaster).WithMany(p => p.Bookings)
                 .HasForeignKey(d => d.PackageMasterId)
-                .HasConstraintName("FK__Bookings__packag__534D60F1");
+                .HasConstraintName("FK__Bookings__packag__5AEE82B9");
 
             entity.HasOne(d => d.User).WithMany(p => p.Bookings)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__Bookings__user_i__52593CB8");
+                .HasConstraintName("FK__Bookings__user_i__59FA5E80");
         });
 
         modelBuilder.Entity<HotelMaster>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__HotelMas__3213E83F4C8B8E0E");
+            entity.HasKey(e => e.Id).HasName("PK__HotelMas__3213E83FB0057414");
 
             entity.ToTable("HotelMaster");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.HotelImages)
+                .IsUnicode(false)
+                .HasColumnName("hotel_images");
             entity.Property(e => e.HotelName)
                 .HasMaxLength(50)
                 .HasColumnName("hotel_name");
@@ -84,38 +86,45 @@ public partial class TourPackagesContext : DbContext
 
             entity.HasOne(d => d.Place).WithMany(p => p.HotelMasters)
                 .HasForeignKey(d => d.PlaceId)
-                .HasConstraintName("FK__HotelMast__place__3D5E1FD2");
+                .HasConstraintName("FK__HotelMast__place__412EB0B6");
         });
 
         modelBuilder.Entity<PackageDetailsMaster>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__PackageD__3213E83F3631277D");
+            entity.HasKey(e => e.Id).HasName("PK__PackageD__3213E83F2015F411");
 
             entity.ToTable("PackageDetailsMaster");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.DayNumber)
-                .HasMaxLength(10)
-                .HasColumnName("day_number");
+            entity.Property(e => e.DayNumber).HasColumnName("day_number");
+            entity.Property(e => e.Iterinary)
+                .IsUnicode(false)
+                .HasColumnName("iterinary");
             entity.Property(e => e.PackageId).HasColumnName("package_id");
             entity.Property(e => e.PlaceId).HasColumnName("place_id");
+            entity.Property(e => e.PlaceImages)
+                .IsUnicode(false)
+                .HasColumnName("place_images");
 
             entity.HasOne(d => d.Package).WithMany(p => p.PackageDetailsMasters)
                 .HasForeignKey(d => d.PackageId)
-                .HasConstraintName("FK__PackageDe__packa__48CFD27E");
+                .HasConstraintName("FK__PackageDe__packa__4F7CD00D");
 
             entity.HasOne(d => d.Place).WithMany(p => p.PackageDetailsMasters)
                 .HasForeignKey(d => d.PlaceId)
-                .HasConstraintName("FK__PackageDe__place__49C3F6B7");
+                .HasConstraintName("FK__PackageDe__place__5070F446");
         });
 
         modelBuilder.Entity<PackageMaster>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__PackageM__3213E83FE6153D33");
+            entity.HasKey(e => e.Id).HasName("PK__PackageM__3213E83FE80B9D1F");
 
             entity.ToTable("PackageMaster");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.PackageImages)
+                .IsUnicode(false)
+                .HasColumnName("package_images");
             entity.Property(e => e.PackageName)
                 .HasMaxLength(50)
                 .HasColumnName("package_name");
@@ -127,12 +136,12 @@ public partial class TourPackagesContext : DbContext
 
             entity.HasOne(d => d.TravelAgent).WithMany(p => p.PackageMasters)
                 .HasForeignKey(d => d.TravelAgentId)
-                .HasConstraintName("FK__PackageMa__trave__45F365D3");
+                .HasConstraintName("FK__PackageMa__trave__4BAC3F29");
         });
 
         modelBuilder.Entity<PlaceMaster>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__PlaceMas__3213E83F82891E46");
+            entity.HasKey(e => e.Id).HasName("PK__PlaceMas__3213E83FBC8774B2");
 
             entity.ToTable("PlaceMaster");
 
@@ -142,34 +151,30 @@ public partial class TourPackagesContext : DbContext
                 .HasColumnName("place_name");
         });
 
-        modelBuilder.Entity<Request>(entity =>
+        modelBuilder.Entity<PostGallery>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Request__3213E83F150E80D1");
+            entity.HasKey(e => e.Id).HasName("PK__PostGall__3213E83F805F44DC");
 
-            entity.ToTable("Request");
+            entity.ToTable("PostGallery");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Email)
-                .HasMaxLength(50)
-                .HasColumnName("email");
-            entity.Property(e => e.Name)
-                .HasMaxLength(50)
-                .HasColumnName("name");
-            entity.Property(e => e.Password)
+            entity.Property(e => e.AdminId).HasColumnName("admin_id");
+            entity.Property(e => e.ImageType)
                 .HasMaxLength(20)
-                .HasColumnName("password");
-            entity.Property(e => e.Phone)
-                .HasMaxLength(15)
-                .HasColumnName("phone");
-            entity.Property(e => e.Role).HasMaxLength(10);
-            entity.Property(e => e.Username)
-                .HasMaxLength(30)
-                .HasColumnName("Username");
+                .IsUnicode(false)
+                .HasColumnName("image_type");
+            entity.Property(e => e.Images)
+                .IsUnicode(false)
+                .HasColumnName("images");
+
+            entity.HasOne(d => d.Admin).WithMany(p => p.PostGalleries)
+                .HasForeignKey(d => d.AdminId)
+                .HasConstraintName("FK__PostGalle__admin__70DDC3D8");
         });
 
         modelBuilder.Entity<RoomBooking>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__RoomBook__3213E83FD7634BCE");
+            entity.HasKey(e => e.Id).HasName("PK__RoomBook__3213E83F9A20A01E");
 
             entity.ToTable("RoomBooking");
 
@@ -179,16 +184,16 @@ public partial class TourPackagesContext : DbContext
 
             entity.HasOne(d => d.Booking).WithMany(p => p.RoomBookings)
                 .HasForeignKey(d => d.BookingId)
-                .HasConstraintName("FK__RoomBooki__booki__5AEE82B9");
+                .HasConstraintName("FK__RoomBooki__booki__628FA481");
 
             entity.HasOne(d => d.RoomDetails).WithMany(p => p.RoomBookings)
                 .HasForeignKey(d => d.RoomDetailsId)
-                .HasConstraintName("FK__RoomBooki__room___59FA5E80");
+                .HasConstraintName("FK__RoomBooki__room___619B8048");
         });
 
         modelBuilder.Entity<RoomDetailsMaster>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__RoomDeta__3213E83FA2F2C8C4");
+            entity.HasKey(e => e.Id).HasName("PK__RoomDeta__3213E83F26DEB1C5");
 
             entity.ToTable("RoomDetailsMaster");
 
@@ -204,16 +209,16 @@ public partial class TourPackagesContext : DbContext
 
             entity.HasOne(d => d.Hotel).WithMany(p => p.RoomDetailsMasters)
                 .HasForeignKey(d => d.HotelId)
-                .HasConstraintName("FK__RoomDetai__hotel__4316F928");
+                .HasConstraintName("FK__RoomDetai__hotel__47DBAE45");
 
             entity.HasOne(d => d.RoomType).WithMany(p => p.RoomDetailsMasters)
                 .HasForeignKey(d => d.RoomTypeId)
-                .HasConstraintName("FK__RoomDetai__room___4222D4EF");
+                .HasConstraintName("FK__RoomDetai__room___46E78A0C");
         });
 
         modelBuilder.Entity<RoomTypeMaster>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__RoomType__3213E83F8141B054");
+            entity.HasKey(e => e.Id).HasName("PK__RoomType__3213E83FE1C8241B");
 
             entity.ToTable("RoomTypeMaster");
 
@@ -225,13 +230,14 @@ public partial class TourPackagesContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Users__3213E83FF2F74DD6");
+            entity.HasKey(e => e.Id).HasName("PK__Users__3213E83F2619C628");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
                 .HasColumnName("email");
             entity.Property(e => e.Hashkey).HasColumnName("hashkey");
+            entity.Property(e => e.IsActive).HasColumnName("isActive");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
@@ -242,12 +248,12 @@ public partial class TourPackagesContext : DbContext
             entity.Property(e => e.Role).HasMaxLength(10);
             entity.Property(e => e.Username)
                 .HasMaxLength(30)
-                .HasColumnName("Username");
+                .HasColumnName("username");
         });
 
         modelBuilder.Entity<VehicleBooking>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__VehicleB__3213E83F73BF6224");
+            entity.HasKey(e => e.Id).HasName("PK__VehicleB__3213E83F0E5CBE08");
 
             entity.ToTable("VehicleBooking");
 
@@ -257,16 +263,16 @@ public partial class TourPackagesContext : DbContext
 
             entity.HasOne(d => d.Booking).WithMany(p => p.VehicleBookings)
                 .HasForeignKey(d => d.BookingId)
-                .HasConstraintName("FK__VehicleBo__booki__571DF1D5");
+                .HasConstraintName("FK__VehicleBo__booki__5EBF139D");
 
             entity.HasOne(d => d.VehicleDetails).WithMany(p => p.VehicleBookings)
                 .HasForeignKey(d => d.VehicleDetailsId)
-                .HasConstraintName("FK__VehicleBo__vehic__5629CD9C");
+                .HasConstraintName("FK__VehicleBo__vehic__5DCAEF64");
         });
 
         modelBuilder.Entity<VehicleDetailsMaster>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__VehicleD__3213E83F1031B874");
+            entity.HasKey(e => e.Id).HasName("PK__VehicleD__3213E83FC2577C15");
 
             entity.ToTable("VehicleDetailsMaster");
 
@@ -276,19 +282,22 @@ public partial class TourPackagesContext : DbContext
                 .HasColumnName("car_price");
             entity.Property(e => e.PlaceId).HasColumnName("place_id");
             entity.Property(e => e.VehicleId).HasColumnName("vehicle_id");
+            entity.Property(e => e.VehicleImages)
+                .IsUnicode(false)
+                .HasColumnName("vehicle_images");
 
             entity.HasOne(d => d.Place).WithMany(p => p.VehicleDetailsMasters)
                 .HasForeignKey(d => d.PlaceId)
-                .HasConstraintName("FK__VehicleDe__place__4F7CD00D");
+                .HasConstraintName("FK__VehicleDe__place__571DF1D5");
 
             entity.HasOne(d => d.Vehicle).WithMany(p => p.VehicleDetailsMasters)
                 .HasForeignKey(d => d.VehicleId)
-                .HasConstraintName("FK__VehicleDe__vehic__4E88ABD4");
+                .HasConstraintName("FK__VehicleDe__vehic__5629CD9C");
         });
 
         modelBuilder.Entity<VehicleMaster>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__VehicleM__3213E83F8A2F0881");
+            entity.HasKey(e => e.Id).HasName("PK__VehicleM__3213E83FFCB7F288");
 
             entity.ToTable("VehicleMaster");
 

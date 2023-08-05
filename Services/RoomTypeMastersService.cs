@@ -14,10 +14,10 @@ namespace MakeYourTrip.Services
             _roomTypeMasterRepo = roomTypeMasterRepo;   
         }
 
-        public async Task<RoomTypeMaster> Add_RoomType(RoomTypeMaster roomTypeMaster)
+        public async Task<RoomTypeMaster?> Add_RoomType(RoomTypeMaster roomTypeMaster)
         {
             var roomType = await _roomTypeMasterRepo.GetAll();
-            var newroomdetails = roomType.SingleOrDefault(h => h.Id == roomTypeMaster.Id);
+            var newroomdetails = roomType?.SingleOrDefault(h => h.Id == roomTypeMaster.Id);
             if (newroomdetails == null)
             {
                 var myRoomType = await _roomTypeMasterRepo.Add(roomTypeMaster);

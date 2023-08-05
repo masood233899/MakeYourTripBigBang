@@ -12,7 +12,7 @@ using MakeYourTrip.Models.DTO;
 
 namespace MakeYourTrip.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class RoomTypeMastersController : ControllerBase
     {
@@ -32,7 +32,7 @@ namespace MakeYourTrip.Controllers
             try
             {
                 var myRoomType = await _roomTypeMastersService.View_All_RoomType();
-                if (myRoomType.Count > 0)
+                if (myRoomType?.Count > 0)
                     return Ok(myRoomType);
                 return BadRequest(new Error(10, "No room types are Existing"));
             }
@@ -52,7 +52,7 @@ namespace MakeYourTrip.Controllers
             try
             {
                 var myRoomType = await _roomTypeMastersService.Add_RoomType(roomTypeMaster);
-                if (myRoomType.Id != null)
+                if (myRoomType?.Id != null)
                     return Created("Added created Successfully", myRoomType);
                 return BadRequest(new Error(1, $"Room type {roomTypeMaster.Id} is Present already"));
             }

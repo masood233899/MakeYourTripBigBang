@@ -8,10 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using MakeYourTrip.Models;
 using MakeYourTrip.Exceptions;
 using MakeYourTrip.Interfaces;
+using MakeYourTrip.Models.DTO;
+using MakeYourTrip.Services;
 
 namespace MakeYourTrip.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class PackageDetailsMastersController : ControllerBase
     {
@@ -39,15 +41,22 @@ namespace MakeYourTrip.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(PackageDetailsMaster), StatusCodes.Status200OK)]//Success Response
+        [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost]
-        public async Task<ActionResult<PackageDetailsMaster>> PostPackageDetailsMaster(PackageDetailsMaster packageDetailsMaster)
+        public async Task<ActionResult<List<PackageDetailsMaster>>> Add_PackageDetailsMaster(List<PackageDetailsMaster> PackageDetailsMaster)
         {
+
             try
             {
-                var mypackage = await _packageDetailsMastersService.Add_PackageDetailsMaster(packageDetailsMaster);
-                if (mypackage.Id != null)
-                    return Created("Added created Successfully", mypackage);
-                return BadRequest(new Error(1, $"Package Details {packageDetailsMaster.Id} is Present already"));
+                var myPackageDetailsMaster = await _packageDetailsMastersService.Add_PackageDetailsMaster(PackageDetailsMaster);
+
+                if (myPackageDetailsMaster != null)
+                {
+                    return Created("PackageDetailsMaster created Successfully", myPackageDetailsMaster);
+                }
+
+                return BadRequest(new Error(1, "No PackageDetailsMaster were added."));
             }
             catch (InvalidPrimaryKeyId ip)
             {
@@ -57,7 +66,25 @@ namespace MakeYourTrip.Controllers
             {
                 return BadRequest(new Error(25, ise.Message));
             }
-        }
 
+        }
+        [ProducesResponseType(typeof(PackageDetailsMaster), StatusCodes.Status200OK)]//Success Response
+        [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
+        [HttpPost]
+
+        public async Task<ActionResult<PackageDetailsMaster>> PostPlaceMaster([FromForm] PlaceFormModel placeFormModel)
+        {
+            try
+            {
+                var createdHotel = await _packageDetailsMastersService.PostImage(placeFormModel);
+                return Ok(createdHotel);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
     }
 }

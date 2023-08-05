@@ -13,6 +13,8 @@ public partial class VehicleDetailsMaster
 
     public int? PlaceId { get; set; }
 
+    public string? VehicleImages { get; set; }
+
     public virtual PlaceMaster? Place { get; set; }
 
     public virtual VehicleMaster? Vehicle { get; set; }

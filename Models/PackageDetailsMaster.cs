@@ -11,7 +11,11 @@ public partial class PackageDetailsMaster
 
     public int? PlaceId { get; set; }
 
-    public string? DayNumber { get; set; }
+    public int? DayNumber { get; set; }
+
+    public string? PlaceImages { get; set; }
+
+    public string? Iterinary { get; set; }
 
     public virtual PackageMaster? Package { get; set; }
 

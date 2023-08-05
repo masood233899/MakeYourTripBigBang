@@ -19,32 +19,65 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
+//builder.Services.AddScoped<IUsersService, UsersService>();
+//builder.Services.AddScoped<ITokenGenerate, TokenService>();
+//builder.Services.AddScoped<ICrud<User, UserDTO>, UsersRepo>();
+//builder.Services.AddScoped<IPlaceMastersService, PlaceMastersService>();
+//builder.Services.AddScoped<ICrud<PlaceMaster, IdDTO>, PlaceMastersRepo>();
+//builder.Services.AddScoped<ICrud<RoomTypeMaster, IdDTO>, RoomTypeMastersRepo>();
+//builder.Services.AddScoped<ICrud<VehicleMaster, IdDTO>, VehicleMastersRepo>();
+//builder.Services.AddScoped<IRoomTypeMastersService, RoomTypeMastersService>();
+//builder.Services.AddScoped<IVehicleMastersService, VehicleMastersService>();
+//builder.Services.AddScoped<ICrud<HotelMaster, IdDTO>, HotelMastersRepo>();
+//builder.Services.AddScoped<IHotelMastersService, HotelMastersService>();
+//builder.Services.AddScoped<ICrud<PackageMaster, IdDTO>, PackageMastersRepo>();
+//builder.Services.AddScoped<IPackageMastersService, PackageMastersService>();
+//builder.Services.AddScoped<ICrud<PackageDetailsMaster, IdDTO>, PackageDetailsMastersRepo>();
+//builder.Services.AddScoped<IPackageDetailsMastersService, PackageDetailsMastersService>();
+//builder.Services.AddScoped<ICrud<VehicleDetailsMaster, IdDTO>, VehicleDetailsMasterRepo>();
+//builder.Services.AddScoped<IVehicleDetailsMasterService, VehicleDetailsMasterService>();
+//builder.Services.AddScoped<ICrud<Booking, IdDTO>, BookingsRepo>();
+//builder.Services.AddScoped<IBookingsService, BookingsService>();
+//builder.Services.AddScoped<ICrud<VehicleBooking, IdDTO>, VehicleBookingsRepo>();
+//builder.Services.AddScoped<IVehicleBookingsService, VehicleBookingsService>();
+//builder.Services.AddScoped<IRoomDetailsMastersService, RoomDetailsMastersService>();
+//builder.Services.AddScoped<ICrud<RoomDetailsMaster, IdDTO>, RoomDetailsMastersRepo>();
+//builder.Services.AddScoped<IRoomBookingsService, RoomBookingsService>();
+//builder.Services.AddScoped<ICrud<RoomBooking, IdDTO>, RoomBookingsRepo>();
+//builder.Services.AddScoped<IImageRepo<PackageMaster, PackageFormModel>, PackageMastersRepo>();
+//builder.Services.AddScoped<IImageRepo<PackageDetailsMaster, PlaceFormModel>, PackageDetailsMastersRepo>();
+//builder.Services.AddScoped<IImageRepo<VehicleDetailsMaster, VehicleFormModel>, VehicleDetailsMasterRepo>();
+//builder.Services.AddScoped<IImageRepo<HotelMaster, HotelFormModule>, HotelMastersRepo>();
+
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<ITokenGenerate, TokenService>();
 builder.Services.AddScoped<ICrud<User, UserDTO>, UsersRepo>();
 builder.Services.AddScoped<IPlaceMastersService, PlaceMastersService>();
 builder.Services.AddScoped<ICrud<PlaceMaster, IdDTO>, PlaceMastersRepo>();
-builder.Services.AddScoped<ICrud<RoomTypeMaster, IdDTO>, RoomTypeMastersRepo>();
-builder.Services.AddScoped<ICrud<VehicleMaster, IdDTO>, VehicleMastersRepo>();
-builder.Services.AddScoped<IRoomTypeMastersService, RoomTypeMastersService>();
-builder.Services.AddScoped<IVehicleMastersService, VehicleMastersService>();
-builder.Services.AddScoped<ICrud<HotelMaster, IdDTO>, HotelMastersRepo>();
 builder.Services.AddScoped<IHotelMastersService, HotelMastersService>();
-builder.Services.AddScoped<ICrud<PackageMaster, IdDTO>, PackageMastersRepo>();
+builder.Services.AddScoped<ICrud<HotelMaster, IdDTO>, HotelMastersRepo>();
 builder.Services.AddScoped<IPackageMastersService, PackageMastersService>();
-builder.Services.AddScoped<ICrud<PackageDetailsMaster, IdDTO>, PackageDetailsMastersRepo>();
-builder.Services.AddScoped<IPackageDetailsMastersService, PackageDetailsMastersService>();
-builder.Services.AddScoped<ICrud<VehicleDetailsMaster, IdDTO>, VehicleDetailsMasterRepo>();
-builder.Services.AddScoped<IVehicleDetailsMasterService, VehicleDetailsMasterService>();
-builder.Services.AddScoped<ICrud<Booking, IdDTO>, BookingsRepo>();
-builder.Services.AddScoped<IBookingsService, BookingsService>();
-builder.Services.AddScoped<ICrud<VehicleBooking, IdDTO>, VehicleBookingsRepo>();
-builder.Services.AddScoped<IVehicleBookingsService, VehicleBookingsService>();
+builder.Services.AddScoped<ICrud<PackageMaster, IdDTO>, PackageMastersRepo>();
+builder.Services.AddScoped<IRoomTypeMastersService, RoomTypeMastersService>();
+builder.Services.AddScoped<ICrud<RoomTypeMaster, IdDTO>, RoomTypeMastersRepo>();
 builder.Services.AddScoped<IRoomDetailsMastersService, RoomDetailsMastersService>();
 builder.Services.AddScoped<ICrud<RoomDetailsMaster, IdDTO>, RoomDetailsMastersRepo>();
-
-
-
+builder.Services.AddScoped<IVehicleMastersService, VehicleMastersService>();
+builder.Services.AddScoped<ICrud<VehicleMaster, IdDTO>, VehicleMastersRepo>();
+builder.Services.AddScoped<IVehicleDetailsMasterService, VehicleDetailsMasterService>();
+builder.Services.AddScoped<ICrud<VehicleDetailsMaster, IdDTO>, VehicleDetailsMasterRepo>();
+builder.Services.AddScoped<IBookingsService, BookingsService>();
+builder.Services.AddScoped<ICrud<Booking, IdDTO>, BookingsRepo>();
+builder.Services.AddScoped<IVehicleBookingsService, VehicleBookingsService>();
+builder.Services.AddScoped<ICrud<VehicleBooking, IdDTO>, VehicleBookingsRepo>();
+builder.Services.AddScoped<IRoomBookingsService, RoomBookingsService>();
+builder.Services.AddScoped<ICrud<RoomBooking, IdDTO>, RoomBookingsRepo>();
+builder.Services.AddScoped<IPackageDetailsMastersService, PackageDetailsMastersService>();
+builder.Services.AddScoped<ICrud<PackageDetailsMaster, IdDTO>, PackageDetailsMastersRepo>();
+builder.Services.AddScoped<IImageRepo<PackageMaster, PackageFormModel>, PackageMastersRepo>();
+builder.Services.AddScoped<IImageRepo<PackageDetailsMaster, PlaceFormModel>, PackageDetailsMastersRepo>();
+builder.Services.AddScoped<IImageRepo<VehicleDetailsMaster, VehicleFormModel>, VehicleDetailsMasterRepo>();
+builder.Services.AddScoped<IImageRepo<HotelMaster, HotelFormModule>, HotelMastersRepo>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                .AddJwtBearer(options =>
                {
@@ -82,6 +115,7 @@ builder.Services.AddSwaggerGen(c => {
                      }
                  });
 });
+
 
 
 builder.Services.AddDbContext<TourPackagesContext>(

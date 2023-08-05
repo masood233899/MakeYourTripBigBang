@@ -23,8 +23,13 @@ namespace MakeYourTrip.Services
         {
             UserDTO user = null;
             var userData = await _userRepo.GetValue(userDTO);
+
             if (userData != null)
             {
+                if (userData.IsActive == false)
+                {
+                    return null;
+                }
                 var hmac = new HMACSHA512(userData.Hashkey);
                 var userPass = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDTO.Password));
                 for (int i = 0; i < userPass.Length; i++)
@@ -36,6 +41,7 @@ namespace MakeYourTrip.Services
                 user.Username = userData.Username;
                 user.Role = userData.Role;
                 user.Token = _tokenService.GenerateToken(user);
+                
             }
             return user;
         }
@@ -47,6 +53,10 @@ namespace MakeYourTrip.Services
             {
                 registerDTO.Password = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDTO.UserPassword));
                 registerDTO.Hashkey = hmac.Key;
+                if (registerDTO.Role == "Agent")
+                {
+                    registerDTO.IsActive = false;
+                }
                 var resultUser = await _userRepo.Add(registerDTO);
                 if (resultUser != null)
                 {
@@ -58,7 +68,6 @@ namespace MakeYourTrip.Services
             }
             return user;
         }
-
         public async Task<UserDTO> Update(UserRegisterDTO user)
         {
             var users = await _userRepo.GetAll();
@@ -107,6 +116,40 @@ namespace MakeYourTrip.Services
                 }
             }
             return false;
+        }
+        public async Task<User?> ApproveAgent(User agent)
+        {
+            agent.IsActive = true;
+            var newagent = await _userRepo.Update(agent);
+            if (newagent != null)
+            {
+                return newagent;
+            }
+
+            return null;
+        }
+
+        public async Task<List<User>?> GetUnApprovedAgent()
+        {
+            var users = await _userRepo.GetAll();
+            if (users != null)
+            {
+                var unApprovedAgent = users.Where(user => user.IsActive == false).ToList();
+                return unApprovedAgent;
+            }
+            return null;
+
+
+        }
+
+        public async Task<User?> DeleteAgent(UserDTO user)
+        {
+            var deleteduser = await _userRepo.Delete(user);
+            if (deleteduser != null)
+            {
+                return deleteduser;
+            }
+            return null;
         }
     }
 }

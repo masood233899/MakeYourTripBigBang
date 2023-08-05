@@ -8,10 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using MakeYourTrip.Models;
 using MakeYourTrip.Exceptions;
 using MakeYourTrip.Interfaces;
+using MakeYourTrip.Services;
+using MakeYourTrip.Models.DTO;
 
 namespace MakeYourTrip.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class VehicleDetailsMastersController : ControllerBase
     {
@@ -29,7 +31,7 @@ namespace MakeYourTrip.Controllers
             try
             {
                 var myVehicleDetailsMasters = await _vehicleDetailsMasterService.View_All_VehicleDetailsMaster();
-                if (myVehicleDetailsMasters.Count > 0)
+                if (myVehicleDetailsMasters?.Count > 0)
                     return Ok(myVehicleDetailsMasters);
                 return BadRequest(new Error(10, "No Vehicle details Exists"));
             }
@@ -39,15 +41,22 @@ namespace MakeYourTrip.Controllers
             }
         }
 
+        [ProducesResponseType(typeof(VehicleDetailsMaster), StatusCodes.Status200OK)]//Success Response
+        [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpPost]
-        public async Task<ActionResult<VehicleDetailsMaster>> PostVehicleDetailsMaster(VehicleDetailsMaster vehicleDetailsMaster)
+        public async Task<ActionResult<List<VehicleDetailsMaster>>> Add_VehicleDetailsMaster(List<VehicleDetailsMaster> VehicleDetailsMaster)
         {
+
             try
             {
-                var myVehicleDetailsMasters = await _vehicleDetailsMasterService.Add_VehicleDetailsMaster(vehicleDetailsMaster);
-                if (myVehicleDetailsMasters.Id != null)
-                    return Created("Added created Successfully", myVehicleDetailsMasters);
-                return BadRequest(new Error(1, $"Vehicle Details {vehicleDetailsMaster.Id} is Present already"));
+                var myVehicleDetailsMaster = await _vehicleDetailsMasterService.Add_VehicleDetailsMaster(VehicleDetailsMaster);
+
+                if (myVehicleDetailsMaster != null)
+                {
+                    return Created("VehicleDetailsMaster created Successfully", myVehicleDetailsMaster);
+                }
+
+                return BadRequest(new Error(1, "No VehicleDetailsMaster were added."));
             }
             catch (InvalidPrimaryKeyId ip)
             {
@@ -57,6 +66,25 @@ namespace MakeYourTrip.Controllers
             {
                 return BadRequest(new Error(25, ise.Message));
             }
+
+        }
+        [ProducesResponseType(typeof(PackageDetailsMaster), StatusCodes.Status200OK)]//Success Response
+        [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
+        [HttpPost]
+
+        public async Task<ActionResult<PackageDetailsMaster>> PostPlaceMaster([FromForm] VehicleFormModel vehicleFormModel)
+        {
+            try
+            {
+                var createdHotel = await _vehicleDetailsMasterService.PostImage(vehicleFormModel);
+                return Ok(createdHotel);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
     }
 }

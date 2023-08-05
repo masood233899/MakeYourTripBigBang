@@ -9,10 +9,11 @@ using MakeYourTrip.Models;
 using MakeYourTrip.Interfaces;
 using MakeYourTrip.Exceptions;
 using MakeYourTrip.Services;
+using MakeYourTrip.Models.DTO;
 
 namespace MakeYourTrip.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class VehicleBookingsController : ControllerBase
     {
@@ -23,14 +24,15 @@ namespace MakeYourTrip.Controllers
             _vehicleBookingsService = vehicleBookingsService;
         }
 
-        // GET: api/VehicleBookings
+        [ProducesResponseType(typeof(VehicleBooking), StatusCodes.Status200OK)]//Success Response
+        [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VehicleBooking>>> GetVehicleBookings()
         {
             try
             {
                 var myVehicle = await _vehicleBookingsService.View_All_VehicleBooking();
-                if (myVehicle.Count > 0)
+                if (myVehicle?.Count > 0)
                     return Ok(myVehicle);
                 return BadRequest(new Error(10, "No Vehicle Booking Exists"));
             }
@@ -48,9 +50,9 @@ namespace MakeYourTrip.Controllers
             try
             {
                 var myVehicle = await _vehicleBookingsService.Add_VehicleBooking(vehicleBooking);
-                if (myVehicle.Id != null)
+                if (myVehicle != null)
                     return Created("Vehicle Booked Successfully", myVehicle);
-                return BadRequest(new Error(1, $"vehicle {myVehicle.Id} is Booked already"));
+                return BadRequest(new Error(1, $"vehicle {vehicleBooking.Id} is Booked already"));
             }
             catch (InvalidPrimaryKeyId ip)
             {
@@ -61,6 +63,5 @@ namespace MakeYourTrip.Controllers
                 return BadRequest(new Error(25, ise.Message));
             }
         }
-
     }
 }

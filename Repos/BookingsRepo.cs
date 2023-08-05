@@ -94,8 +94,9 @@ namespace MakeYourTrip.Repos
                 var Booking = Bookings.SingleOrDefault(h => h.Id == item.Id);
                 if (Booking != null)
                 {
-                    Booking.Feedback = Booking.Feedback != null ? Booking.Feedback : Booking.Feedback;
-                    
+                    Booking.Feedback = item.Feedback != null ? item.Feedback : Booking.Feedback;
+                    Booking.TotalAmount = item.TotalAmount != null ? item.TotalAmount : Booking.TotalAmount;
+
                     _context.Bookings.Update(Booking);
                     await _context.SaveChangesAsync();
                     return Booking;

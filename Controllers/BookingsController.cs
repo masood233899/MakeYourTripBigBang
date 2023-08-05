@@ -13,7 +13,7 @@ using MakeYourTrip.Services;
 
 namespace MakeYourTrip.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class BookingsController : ControllerBase
     {
@@ -41,28 +41,7 @@ namespace MakeYourTrip.Controllers
             }
         }
 
-        // GET: api/Bookings/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Booking>> GetBooking(IdDTO idDTO)
-        //{
-        //    try
-        //    {
-        //        /* if (PlaceMaster.Id <= 0)
-        //             throw new InvalidPrimaryID();*/
-        //        var myBooking = await _bookingsService.View_Booking(idDTO);
-        //        if (myBooking.Id != null)
-        //            return Created("Boo created Successfully", myBooking);
-        //        return BadRequest(new Error(1, $"PlaceMaster {PlaceMaster.Id} is Present already"));
-        //    }
-        //    catch (InvalidPrimaryKeyId ip)
-        //    {
-        //        return BadRequest(new Error(2, ip.Message));
-        //    }
-        //    catch (InvalidSqlException ise)
-        //    {
-        //        return BadRequest(new Error(25, ise.Message));
-        //    }
-        //}
+        
 
         [HttpPost]
         public async Task<ActionResult<Booking>> PostBooking(Booking booking)
@@ -70,13 +49,34 @@ namespace MakeYourTrip.Controllers
             try
             {
                 var myBooking = await _bookingsService.Add_Booking(booking);
-                if (myBooking.Id != null)
-                    return Created("Added created Successfully", myBooking);
+                if (myBooking != null)
+                    return Created("Booked Successfully", myBooking);
                 return BadRequest(new Error(1, $"Booking {booking.Id} is Present already"));
             }
             catch (InvalidPrimaryKeyId ip)
             {
                 return BadRequest(new Error(2, ip.Message));
+            }
+            catch (InvalidSqlException ise)
+            {
+                return BadRequest(new Error(25, ise.Message));
+            }
+        }
+
+        [ProducesResponseType(typeof(Booking), StatusCodes.Status200OK)]//Success Response
+        [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
+        [HttpPost]
+
+        public async Task<ActionResult<Booking>> View_Booking(IdDTO idDTO)
+        {
+            try
+            {
+                if (idDTO.Idint <= 0)
+                    return BadRequest(new Error(4, "Enter Valid Booking ID"));
+                var myBooking = await _bookingsService.View_Booking(idDTO);
+                if (myBooking != null)
+                    return Created("Booking", myBooking);
+                return BadRequest(new Error(9, $"There is no Booking present for the id {idDTO.Idint}"));
             }
             catch (InvalidSqlException ise)
             {

@@ -16,7 +16,7 @@ namespace MakeYourTrip.Services
         public async Task<VehicleBooking> Add_VehicleBooking(VehicleBooking vehicleBooking)
         {
             var VehicleBookings = await _vehicleBookingrepo.GetAll();
-            var newVehicleBooking = VehicleBookings.SingleOrDefault(h => h.Id == vehicleBooking.Id);
+            var newVehicleBooking = VehicleBookings?.SingleOrDefault(h => h.Id == vehicleBooking.Id);
             if (newVehicleBooking == null)
             {
                 var myVehicleDetailsMaster = await _vehicleBookingrepo.Add(vehicleBooking);
@@ -31,5 +31,6 @@ namespace MakeYourTrip.Services
             var VehicleBookings = await _vehicleBookingrepo.GetAll();
             return VehicleBookings;
         }
+        
     }
 }

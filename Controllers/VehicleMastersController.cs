@@ -9,10 +9,11 @@ using MakeYourTrip.Models;
 using MakeYourTrip.Interfaces;
 using MakeYourTrip.Exceptions;
 using MakeYourTrip.Services;
+using MakeYourTrip.Models.DTO;
 
 namespace MakeYourTrip.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class VehicleMastersController : ControllerBase
     {
@@ -29,7 +30,7 @@ namespace MakeYourTrip.Controllers
             try
             {
                 var myVehicle = await _vehicleMastersService.View_All_VehicleMaster();
-                if (myVehicle.Count > 0)
+                if (myVehicle?.Count > 0)
                     return Ok(myVehicle);
                 return BadRequest(new Error(10, "No Vehicles are Existing"));
             }
@@ -45,9 +46,9 @@ namespace MakeYourTrip.Controllers
             try
             {
                 var myVehicle = await _vehicleMastersService.Add_VehicleMaster(vehicleMaster);
-                if (myVehicle.Id != null)
+                if (myVehicle != null)
                     return Created("Vehicle Added Successfully", myVehicle);
-                return BadRequest(new Error(1, $"vehicle {myVehicle.Id} is Present already"));
+                return BadRequest(new Error(1, $"vehicle {vehicleMaster.Id} is Present already"));
             }
             catch (InvalidPrimaryKeyId ip)
             {
@@ -58,6 +59,5 @@ namespace MakeYourTrip.Controllers
                 return BadRequest(new Error(25, ise.Message));
             }
         }
-
     }
 }

@@ -1,4 +1,5 @@
-﻿using MakeYourTrip.Models.DTO;
+﻿using MakeYourTrip.Models;
+using MakeYourTrip.Models.DTO;
 
 namespace MakeYourTrip.Interfaces
 {
@@ -8,5 +9,8 @@ namespace MakeYourTrip.Interfaces
         Task<UserDTO> Login(UserDTO userDTO);
         Task<UserDTO> Update(UserRegisterDTO user);
         Task<bool> UpdatePassword(UserDTO userDTO);
+        Task<User?> ApproveAgent(User agent);
+        Task<List<User>?> GetUnApprovedAgent();
+        Task<User?> DeleteAgent(UserDTO user);
     }
 }

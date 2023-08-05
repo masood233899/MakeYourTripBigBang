@@ -17,7 +17,7 @@ namespace MakeYourTrip.Services
         public async Task<VehicleMaster> Add_VehicleMaster(VehicleMaster vehicleMaster)
         {
             var VehicleMasters = await _vehicleMasterRepo.GetAll();
-            var newvehiclemaster = VehicleMasters.SingleOrDefault(h => h.Id == vehicleMaster.Id);
+            var newvehiclemaster = VehicleMasters?.SingleOrDefault(h => h.Id == vehicleMaster.Id);
             if (newvehiclemaster == null)
             {
                 var myvehicle = await _vehicleMasterRepo.Add(vehicleMaster);

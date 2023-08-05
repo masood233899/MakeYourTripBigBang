@@ -11,6 +11,8 @@ public partial class HotelMaster
 
     public int? PlaceId { get; set; }
 
+    public string? HotelImages { get; set; }
+
     public virtual PlaceMaster? Place { get; set; }
 
     public virtual ICollection<RoomDetailsMaster> RoomDetailsMasters { get; set; } = new List<RoomDetailsMaster>();

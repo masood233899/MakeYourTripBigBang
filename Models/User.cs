@@ -21,7 +21,11 @@ public partial class User
 
     public string? Role { get; set; }
 
+    public bool? IsActive { get; set; }
+
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
     public virtual ICollection<PackageMaster> PackageMasters { get; set; } = new List<PackageMaster>();
+
+    public virtual ICollection<PostGallery> PostGalleries { get; set; } = new List<PostGallery>();
 }

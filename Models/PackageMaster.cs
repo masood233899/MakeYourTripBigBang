@@ -17,6 +17,8 @@ public partial class PackageMaster
 
     public string? PackageImages { get; set; }
 
+    public int? Daysno { get; set; }
+
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
     public virtual ICollection<PackageDetailsMaster> PackageDetailsMasters { get; set; } = new List<PackageDetailsMaster>();

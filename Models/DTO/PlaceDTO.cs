@@ -7,6 +7,7 @@
         public string? PlaceName { get; set; }
         public int? DayNumber { get; set; }
         public string? PlaceImagepath { get; set; }
+        public string? Iterinary { get; set; }  
 
 
         public List<HotelDTO>? HotelList { get; set; }

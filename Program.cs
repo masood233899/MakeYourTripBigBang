@@ -78,6 +78,10 @@ builder.Services.AddScoped<IImageRepo<PackageMaster, PackageFormModel>, PackageM
 builder.Services.AddScoped<IImageRepo<PackageDetailsMaster, PlaceFormModel>, PackageDetailsMastersRepo>();
 builder.Services.AddScoped<IImageRepo<VehicleDetailsMaster, VehicleFormModel>, VehicleDetailsMasterRepo>();
 builder.Services.AddScoped<IImageRepo<HotelMaster, HotelFormModule>, HotelMastersRepo>();
+builder.Services.AddScoped<IPostGalleryService, PostGalleryService>();
+builder.Services.AddScoped<ICrud<PostGallery, IdDTO>, PostGalleryRepo>();
+builder.Services.AddScoped<IImageRepo<PostGallery, PostGalleryFormModule>, PostGalleryRepo>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                .AddJwtBearer(options =>
                {

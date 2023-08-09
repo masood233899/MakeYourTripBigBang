@@ -99,10 +99,11 @@ namespace MakeYourTrip.Repos
                 var package = packages.SingleOrDefault(h => h.Id == item.Id);
                 if (package != null)
                 {
-                    package.PackageName = package.PackageName != null ? package.PackageName : package.PackageName;
-                    package.PackagePrice = package.PackagePrice != null ? package.PackagePrice : package.PackagePrice;
-                    package.Region = package.Region != null ? package.Region : package.Region;
-                    package.TravelAgentId = package.TravelAgentId != null ? package.TravelAgentId : package.TravelAgentId;
+                    package.PackageName = item.PackageName != null ? item.PackageName : package.PackageName;
+                    package.PackagePrice = item.PackagePrice != null ? item.PackagePrice : package.PackagePrice;
+                    package.Region = item.Region != null ? item.Region : package.Region;
+                    package.Daysno = item.Daysno != null ? item.Daysno : package.Daysno;
+                    package.TravelAgentId = item.TravelAgentId != null ? item.TravelAgentId : package.TravelAgentId;
 
                     _context.PackageMasters.Update(package);
                     await _context.SaveChangesAsync();
@@ -128,6 +129,7 @@ namespace MakeYourTrip.Repos
             newPackageMaster.PackageName = packageFormModel.PackageName;
             newPackageMaster.TravelAgentId = packageFormModel.TravelAgentId;
             newPackageMaster.Region = packageFormModel.Region;
+            newPackageMaster.Daysno = packageFormModel.Dayno;
             newPackageMaster.PackageImages = packageFormModel.Imagepath;
 
 

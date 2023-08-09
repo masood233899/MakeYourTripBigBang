@@ -41,8 +41,9 @@ public partial class TourPackagesContext : DbContext
 
     public virtual DbSet<VehicleMaster> VehicleMasters { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
-
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("data source = .\\SQLEXPRESS; initial catalog = TravelVista;integrated security=SSPI;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -55,6 +56,9 @@ public partial class TourPackagesContext : DbContext
                 .HasMaxLength(500)
                 .HasColumnName("feedback");
             entity.Property(e => e.PackageMasterId).HasColumnName("package_master_id");
+            entity.Property(e => e.Startdate)
+                .HasColumnType("date")
+                .HasColumnName("startdate");
             entity.Property(e => e.TotalAmount)
                 .HasColumnType("money")
                 .HasColumnName("total_amount");
@@ -122,6 +126,7 @@ public partial class TourPackagesContext : DbContext
             entity.ToTable("PackageMaster");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Daysno).HasColumnName("daysno");
             entity.Property(e => e.PackageImages)
                 .IsUnicode(false)
                 .HasColumnName("package_images");

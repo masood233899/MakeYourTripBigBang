@@ -12,6 +12,9 @@
 
         public string? Region { get; set; }
 
+        public int? Dayno { get; set; }
+
+
         public string? Imagepath { get; set; }
         public IFormFile? FormFile { get; set; }
     }

@@ -3,6 +3,7 @@ using MakeYourTrip.Models;
 using MakeYourTrip.Models.DTO;
 using MakeYourTrip.Repos;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
 
 namespace MakeYourTrip.Services
 {
@@ -62,6 +63,8 @@ namespace MakeYourTrip.Services
                     PackageName = image.PackageName,
                     TravelAgentId = image.TravelAgentId,
                     Region = image.Region,
+                    Daysno = image.Daysno,
+
 
                     PackageImages = Convert.ToBase64String(imageBytes)
                 };
@@ -363,7 +366,7 @@ namespace MakeYourTrip.Services
                                               PlaceId = g.Key.Id,
                                               Vehicles = g.Select(async item => new VehicleDTO
                                               {
-                                                  VehicleDetailsId = item.vd.VehicleId,
+                                                  VehicleDetailsId = item.vd.Id,
                                                   CarPrice = item.vd.CarPrice,
                                                   VehicleName = item.vm.VehicleName,
                                                   NumberOfSeats = item.vm.NumberOfSeats,
@@ -391,6 +394,7 @@ namespace MakeYourTrip.Services
                                                PlaceName = pl.PlaceName,
                                                DayNumber = pd.DayNumber,
                                                PlaceImagepath = pd.PlaceImages,
+                                               Iterinary = pd.Iterinary,
                                                HotelList = (from hm in hotelMasterData
                                                             where hm.PlaceId == pl.Id
                                                             select new HotelDTO

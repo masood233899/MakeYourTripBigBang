@@ -11,6 +11,7 @@ using MakeYourTrip.Models.DTO;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using MakeYourTrip.Interfaces;
 using Error = MakeYourTrip.Models.Error;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MakeYourTrip.Controllers
 {
@@ -127,7 +128,7 @@ namespace MakeYourTrip.Controllers
             return null;
 
         }
-
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]//Success Response
         [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
         [HttpGet]

@@ -126,6 +126,7 @@ namespace MakeYourTrip.Repos
             pack.PlaceId = placeFormModel.PlaceId;
             pack.DayNumber = placeFormModel.DayNumber;
             pack.PlaceImages = PlaceImagepath;
+            pack.Iterinary=placeFormModel.Iterinary;
             _context.PackageDetailsMasters.Add(pack);
             await _context.SaveChangesAsync();
             return pack;

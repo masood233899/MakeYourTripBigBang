@@ -83,5 +83,61 @@ namespace MakeYourTrip.Controllers
                 return BadRequest(new Error(25, ise.Message));
             }
         }
+
+        [ProducesResponseType(typeof(Booking), StatusCodes.Status200OK)]//Success Response
+        [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
+        [HttpPost]
+
+        public async Task<ActionResult<BookDTO>> getbybookingsbyuserid(IdDTO idDTO)
+        {
+            try
+            {
+                var result = await _bookingsService.getbookingsbyuserId(idDTO);
+                if(result != null)
+                {
+                    return Created("Booking", result);
+
+
+                }
+                else
+                {
+                    return BadRequest(new Error(9, $"There is no Booking present for the userid {idDTO.Idint}"));
+
+                }
+
+            }
+            catch (InvalidSqlException ise)
+            {
+                return BadRequest(new Error(25, ise.Message));
+            }
+        }
+
+        [ProducesResponseType(typeof(Booking), StatusCodes.Status200OK)]//Success Response
+        [ProducesResponseType(StatusCodes.Status404NotFound)]//Failure Response
+        [HttpPut]
+
+        public async Task<ActionResult<Booking>> AddFeedback(Booking book)
+        {
+            try
+            {
+                var result = await _bookingsService.giveFeedback(book);
+                if (result != null)
+                {
+                    return Created("feeback added", result);
+
+
+                }
+                else
+                {
+                    return BadRequest(new Error(9, $"There is no Booking present for to update"));
+
+                }
+
+            }
+            catch (InvalidSqlException ise)
+            {
+                return BadRequest(new Error(25, ise.Message));
+            }
+        }
     }
 }

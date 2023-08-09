@@ -38,6 +38,7 @@ namespace MakeYourTrip.Services
                         return null;
                 }
                 user = new UserDTO();
+                user.Id=userData.Id;
                 user.Username = userData.Username;
                 user.Role = userData.Role;
                 user.Token = _tokenService.GenerateToken(user);
@@ -53,9 +54,13 @@ namespace MakeYourTrip.Services
             {
                 registerDTO.Password = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDTO.UserPassword));
                 registerDTO.Hashkey = hmac.Key;
-                if (registerDTO.Role == "Agent")
+                if (registerDTO.Role == "agent")
                 {
                     registerDTO.IsActive = false;
+                }
+                else
+                {
+                    registerDTO.IsActive = true;
                 }
                 var resultUser = await _userRepo.Add(registerDTO);
                 if (resultUser != null)

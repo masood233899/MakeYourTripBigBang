@@ -9,6 +9,8 @@
         public int? PlaceId { get; set; }
 
         public int? DayNumber { get; set; }
+        public string? Iterinary { get; set; }
+
 
         public IFormFile? FormFile { get; set; }
 

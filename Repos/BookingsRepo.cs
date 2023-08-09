@@ -94,6 +94,7 @@ namespace MakeYourTrip.Repos
                 var Booking = Bookings.SingleOrDefault(h => h.Id == item.Id);
                 if (Booking != null)
                 {
+                    
                     Booking.Feedback = item.Feedback != null ? item.Feedback : Booking.Feedback;
                     Booking.TotalAmount = item.TotalAmount != null ? item.TotalAmount : Booking.TotalAmount;
 
